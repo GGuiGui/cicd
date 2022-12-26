@@ -52,7 +52,7 @@ jobs:
         key: ${{ secrets.PRIVATE_KEY }}
         envs: GITHUB_SHA
         script: |
-          docker pull rbqjachl95/cicd:${GITHUB_SHA::7}
-          docker tag rbqjachl95/cicd:${GITHUB_SHA::7} cicd
-          docker stop server
-          docker run -d --rm --name server -p 80:8080 cicd
+          export BUILD_NUMBER=${GITHUB_SHA::7}
+          export IMAGE_STORAGE=rbqjachl95
+          export IMAGE_NAME=cicd
+          ./deploy.sh
