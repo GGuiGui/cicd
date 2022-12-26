@@ -36,3 +36,10 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
+
+    - name: Docker build
+      run: |
+        docker login -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
+        docker build -t cicd .
+        docker tag cicd ${{ secrets.USERNAME }}/cicd:${GITHUB_SHA::7}
+        docker push ${{ secrets.USERNAME }}/cicd:${GITHUB_SHA::7}
