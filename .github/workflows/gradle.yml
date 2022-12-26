@@ -43,3 +43,16 @@ jobs:
         docker build -t cicd .
         docker tag cicd ${{ secrets.USERNAME }}/cicd:${GITHUB_SHA::7}
         docker push ${{ secrets.USERNAME }}/cicd:${GITHUB_SHA::7}
+
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ec2-user
+        key: ${{ secrets.PRIVATE_KEY }}
+        envs: GITHUB_SHA
+        script: |
+          docker pull rbqjachl95/cicd:${GITHUB_SHA::7}
+          docker tag rbqjachl95/cicd:${GITHUB_SHA::7} cicd
+          docker stop server
+          docker run -d --rm --name server -p 80:8080 cicd
